@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+
+# Get the public IP address
+# Taken from NeoFetch
+#
+# VARIABLES
+# ---------
+#
+# Default: '2'
+# Values:  'int'
+# Flag:    --ip_timeout
+PUBLIC_IP_TIMEOUT=2
+#
+# Website to ping for the public IP
+#
+# Default: 'http://ifconfig.me'
+# Values:  'url'
+# Flag:    --ip_host
+PUBLIC_IP_HOST="http://ifconfig.me"
+
+#
+# RETURN
+# ------
+#
+# $PUBLIC_IP string
+#
+
+get_public_ip() {
+
+    if type -p dig >/dev/null; then
+        PUBLIC_IP="$(dig +time=1 +tries=1 +short myip.opendns.com @resolver1.opendns.com)"
+        [[ "$PUBLIC_IP" =~ ^\; ]] && unset PUBLIC_IP
+    fi
+
+    if [[ -z "$PUBLIC_IP" ]] && type -p drill >/dev/null; then
+        PUBLIC_IP="$(drill myip.opendns.com @resolver1.opendns.com | \
+                        awk '/^myip\./ && $3 == "IN" {print $5}')"
+    fi
+
+    if [[ -z "$PUBLIC_IP" ]] && type -p curl >/dev/null; then
+        PUBLIC_IP="$(curl --max-time "$PUBLIC_IP_TIMEOUT" -w '\n' "$PUBLIC_IP_HOST")"
+    fi
+
+    if [[ -z "$PUBLIC_IP" ]] && type -p wget >/dev/null; then
+        PUBLIC_IP="$(wget -T "$PUBLIC_IP_TIMEOUT" -qO- "$PUBLIC_IP_host")"
+    fi
+}

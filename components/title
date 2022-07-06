@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+title(){
+
+    WIDTH=$(tput cols)
+
+    TITLE=$1
+    COUNT=${#TITLE}
+    let ROUNDED_WIDTH=$(( $WIDTH - 1 - ($WIDTH % 2) ))
+    let "LENGTH = ($ROUNDED_WIDTH-$COUNT)/2"
+    for ((i=1; i<=$LENGTH; i++)); do
+        printf "${I_Black}-"
+    done
+
+    printf "${Purple} $TITLE "
+
+    for ((i=1; i<=$LENGTH; i++)); do
+        printf "${I_Black}-"
+    done
+    
+    printf "\n"
+}

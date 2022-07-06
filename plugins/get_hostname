@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Get the current hostname
+#
+# Return:
+# $HOSTNAME string
+#
+get_hostname()
+{
+    HOSTNAME=$(hostname -f)
+}

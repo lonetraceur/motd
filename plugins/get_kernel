@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# Shorten the output of the kernel function.
+#
+# Default:  'on'
+# Values:   'on', 'off'
+# Flag:     --kernel_shorthand
+# Supports: Everything except *BSDs (except PacBSD and PC-BSD)
+#
+# Example:
+# on:  '4.8.9-1-ARCH'
+# off: 'Linux 4.8.9-1-ARCH'
+kernel_shorthand="on"
+
+# Get the Kernel
+# Taken from NeoFetch
+#
+# Return:
+# $KERNEL_NAME    string
+# $KERNEL_VERSION string
+# $KERNEL_MACHINE string
+# $DARWIN_NAME    string
+# $OSX_VERSION    string
+# $OSX_BUILD      string
+
+get_kernel() {
+    # Cache the output of uname so we don't
+    # have to spawn it multiple times.
+    IFS=" " read -ra uname <<< "$(uname -srm)"
+
+    KERNEL_NAME="${uname[0]}"
+    KERNEL_VERSION="${uname[1]}"
+    KERNEL_MACHINE="${uname[2]}"
+
+    if [[ "$KERNEL_NAME" == "Darwin" ]]; then
+        IFS=$'\n' read -d "" -ra sw_vers <<< "$(awk -F'<|>' '/key|string/ {print $3}' \
+                            "/System/Library/CoreServices/SystemVersion.plist")"
+        for ((i=0;i<${#sw_vers[@]};i+=2)) {
+            case ${sw_vers[i]} in
+                ProductName)          DARWIN_NAME=${sw_vers[i+1]} ;;
+                ProductVersion)       OSX_VERSION=${sw_vers[i+1]} ;;
+                ProductBuildVersion)  OSX_BUILD=${sw_vers[i+1]}   ;;
+            esac
+        }
+    fi
+
+}

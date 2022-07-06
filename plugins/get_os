@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Get the Operating System name
+# Taken from NeoFetch
+#
+# Return:
+# $OS string
+#
+get_os() {
+
+    case $KERNEL_NAME in
+        Darwin)   OS=$DARWIN_NAME ;;
+        SunOS)    OS=Solaris ;;
+        Haiku)    OS=Haiku ;;
+        MINIX)    OS=MINIX ;;
+        AIX)      OS=AIX ;;
+        IRIX*)    OS=IRIX ;;
+        FreeMiNT) OS=FreeMiNT ;;
+
+        Linux|GNU*)
+            OS=Linux
+        ;;
+
+        *BSD|DragonFly|Bitrig)
+            OS=BSD
+        ;;
+
+        CYGWIN*|MSYS*|MINGW*)
+            OS=Windows
+        ;;
+
+        *)
+            printf '%s\n' "Unknown OS detected: '$KERNEL_NAME', aborting..." >&2
+            printf '%s\n' "Open an issue on GitHub to add support for your OS." >&2
+            exit 1
+        ;;
+    esac
+
+}

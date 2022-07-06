@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Create a horizontal progress bar
+# Taken from NeoFetch
+#
+# Bar characters
+#
+# Default:  '-', '='
+# Values:   'string', 'string'
+# Flag:     --bar_char
+#
+# Example:
+# neofetch --bar_char 'elapsed' 'total'
+# neofetch --bar_char '-' '='
+bar_char_elapsed="-"
+bar_char_total="="
+
+# Progress bar length in spaces
+# Number of chars long to make the progress bars.
+#
+# Default:  '15'
+# Values:   'num'
+# Flag:     --bar_length
+bar_length=15
+
+# Progress bar colors
+# When set to distro, uses your distro's logo colors.
+#
+# Default:  'distro', 'distro'
+# Values:   'distro', 'num'
+# Flag:     --bar_colors
+#
+# Example:
+# neofetch --bar_colors 3 4
+# neofetch --bar_colors distro 5
+bar_color_elapsed="Green"
+bar_color_total="I_Black"
+bar_color_text="Cyan"
+
+bar() {
+    # Get the values.
+    elapsed="$(($1 * bar_length / $2))"
+
+    # Create the bar with spaces.
+    printf -v prog  "%${elapsed}s"
+    printf -v total "%$((bar_length - elapsed))s"
+
+    # Set the colors and swap the spaces for $bar_char_.
+    bar+="${!bar_color_elapsed}${prog// /${bar_char_elapsed}}${!bar_color_text}"
+    bar+="${!bar_color_total}${total// /${bar_char_total}}${!bar_color_text}"
+
+    printf "%b" "${bar}"
+}

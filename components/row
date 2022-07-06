@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# usage:
+# row TITLE1 DATA1 TITLE2 DATA2 ...
+row()
+{
+    width=$(tput cols)
+    info_width=10
+
+    if [ "$#" -lt 1 ]; then
+        echo "Need to pass a parameter"
+        return
+    fi
+
+    number_of_parameters=$#
+    let column_count=$number_of_parameters/2
+    let all_columns_count=$column_count*2
+    let column_width=$width/$column_count
+    let data_width=column_width-$info_width-2   # -2 for the colon and space.
+
+    for (( current=1; current<=${number_of_parameters}; current++ ))
+    do 
+        info=${!current}
+        let current=current+1
+        data=${!current}
+        printf "${I_Black}%-${info_width}s: ${Yellow}%-${data_width}s" "${info}" "${data}"
+
+        # Add a newline at end of last column
+        if [ ${current} == ${all_columns_count} ]; then
+            printf "\n"
+        fi
+
+    done
+
+}

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Get puppet details
+
+# Output:
+# $PUPPET_LASTRAN
+# $PUPPET_LOCKED
+# $PUPPET_MESSAGE
+
+get_puppet(){
+
+    lastrun_file=/tmp/puppet.lastrun
+    PUPPET_LASTRAN="-"
+
+    if [ -f "$lastrun_file" ]; then
+        PUPPET_LASTRAN=$(cat "${lastrun_file}")
+    fi
+
+
+    plock_file=/var/tmp/puppet.lock
+    PUPPET_MESSAGE="-"
+    PUPPET_LOCKED="-"
+
+    if [ -f "${plock_file}" ]; then
+        PUPPET_LOCKED="YES"
+        PUPPET_MESSAGE=$(cat "${plock_file}")
+    fi
+    
+}

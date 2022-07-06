@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# Get the current CPU Usage (load)
+# Taken from NeoFetch
+#
+# CPU Cores
+# Display CPU cores in output
+#
+# Default: 'logical'
+# Values:  'logical', 'physical', 'off'
+# Flag:    --cpu_cores
+# Support: 'physical' doesn't work on BSD.
+#
+# Example:
+# logical:  'Intel i7-6500U (4) @ 3.1GHz' (All virtual cores)
+# physical: 'Intel i7-6500U (2) @ 3.1GHz' (All physical cores)
+# off:      'Intel i7-6500U @ 3.1GHz'
+#
+# Returns:
+#   $CPU_USAGE  string
+#   $CORES      string
+# 
+CPU_CORES="logical"
+# Display a bar with the info.
+#
+# Default: 'off'
+# Values:  'bar', 'infobar', 'barinfo', 'off'
+#
+# Example:
+# bar:     '[---=======]'
+# infobar: 'info [---=======]'
+# barinfo: '[---=======] info'
+# off:     'info'
+CPU_DISPLAY="barinfo"
+
+get_cpu_usage() {
+    case $OS in
+        "Windows")
+            CPU_USAGE="$(wmic cpu get loadpercentage)"
+            CPU_USAGE="${CPU_USAGE/LoadPercentage}"
+            CPU_USAGE="${CPU_USAGE//[[:space:]]}"
+        ;;
+
+        *)
+            # Get CPU cores if unset.
+            if [[ "$CPU_CORES" != "logical" ]]; then
+                case $OS in
+                    "Linux" | "MINIX")  CORES="$(grep -c "^processor" /proc/cpuinfo)" ;;
+                    "Mac OS X"|"macOS") CORES="$(sysctl -n hw.logicalcpu_max)" ;;
+                    "BSD")              CORES="$(sysctl -n hw.ncpu)" ;;
+                    "Solaris")          CORES="$(kstat -m cpu_info | grep -c -F "chip_id")" ;;
+                    "Haiku")            CORES="$(sysinfo -cpu | grep -c -F 'CPU #')" ;;
+                    "IRIX")             CORES="$(sysconf NPROC_ONLN)" ;;
+                    "FreeMiNT")         CORES="$(sysctl -n hw.ncpu)" ;;
+
+                    "AIX")
+                        CORES="$(lparstat -i | awk -F':' '/Online Virtual CPUs/ {printf $2}')"
+                    ;;
+                esac
+            fi
+
+            CPU_USAGE="$(ps aux | awk 'BEGIN {sum=0} {sum+=$3}; END {print sum}')"
+            CPU_USAGE="$((${CPU_USAGE/\.*} / ${CORES:-1}))"
+        ;;
+    esac
+
+    # Print the bar.
+    case $CPU_DISPLAY in
+        "bar")     CPU_USAGE="$(bar "$CPU_USAGE" 100)" ;;
+        "infobar") CPU_USAGE="${CPU_USAGE}% $(bar "$CPU_USAGE" 100)" ;;
+        "barinfo") CPU_USAGE="$(bar "$CPU_USAGE" 100) ${CPU_USAGE}%" ;;
+        *)         CPU_USAGE="${CPU_USAGE}%" ;;
+    esac
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Get a systemctl service status
+
+# Input
+# $1 = Service Name in systemctl
+
+# Output:
+# ${VARIABLE_NAME}
+# This is the name of the service in UPPERCASE
+# e.g.
+# If you used "systemctl:php", the output will
+# be a variable called 'PHP'
+#
+
+get_systemctl(){
+
+    SYSTEMCTL="/usr/bin/systemctl"    
+    SEARCH_FOR_SERVICE=$1
+    VARIABLE_NAME=$(echo $SEARCH_FOR_SERVICE | tr '[:lower:]' '[:upper:]')
+
+    if [ ! -f "$SYSTEMCTL" ]; then
+        export declare ${VARIABLE_NAME}="🚫"
+        return 1
+    fi
+
+    SERVICENAME=$(systemctl list-unit-files \*"${SEARCH_FOR_SERVICE}"\* | grep service | head -n 1 | cut -d" " -f1 )
+
+    # Is 'systemctl' available?
+    if [ -f "$SYSTEMCTL" ]; then
+        SERVICE_STATUS=$(systemctl status "${SERVICENAME}" 2> /dev/null | grep "Active:" | awk '{print $2}')
+    fi
+
+    export declare ${VARIABLE_NAME}=$SERVICE_STATUS
+}

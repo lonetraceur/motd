@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Get the local IP address
+# Taken from NeoFetch
+#
+# Return:
+# $LOCAL_IP string
+#
+
+get_local_ip() {
+
+    case $OS in
+        "Linux" | "BSD" | "Solaris" | "AIX" | "IRIX")
+            LOCAL_IP="$(ip route get 1 | awk -F'src' '{print $2; exit}')"
+            LOCAL_IP="${LOCAL_IP/uid*}"
+            [[ -z "$LOCAL_IP" ]] && LOCAL_IP="$(ifconfig -a | awk '/broadcast/ {print $2; exit}')"
+        ;;
+
+        "MINIX")
+            LOCAL_IP="$(ifconfig | awk '{printf $3; exit}')"
+        ;;
+
+        "Mac OS X" | "macOS" | "iPhone OS")
+            LOCAL_IP="$(ipconfig getifaddr en0)"
+            [[ -z "$LOCAL_IP" ]] && LOCAL_IP="$(ipconfig getifaddr en1)"
+        ;;
+
+        "Windows")
+            LOCAL_IP="$(ipconfig | awk -F ': ' '/IPv4 Address/ {printf $2 ", "}')"
+            LOCAL_IP="${LOCAL_IP%\,*}"
+        ;;
+
+        "Haiku")
+            LOCAL_IP="$(ifconfig | awk -F ': ' '/Bcast/ {print $2}')"
+            LOCAL_IP="${LOCAL_IP/, Bcast}"
+        ;;
+    esac
+
+}

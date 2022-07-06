@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+# Message Of The Day
+# (MOTD)
+
+version=0.1
+
+# The REAL location of this file.
+file_location()
+{
+    SOURCE="${BASH_SOURCE[0]:-$0}";
+    while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname -- "$SOURCE"; )" &> /dev/null && pwd 2> /dev/null; )";
+    SOURCE="$( readlink -- "$SOURCE"; )";
+    [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"; # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    done
+    SCRIPT_DIR="$( cd -P "$( dirname -- "$SOURCE"; )" &> /dev/null && pwd 2> /dev/null; )";
+}
+file_location
+
+
+
+# Parts of this has been taken from neofetch. https://github.com/dylanaraps/neofetch
+# This is a customised motd with less built-in than neofetch
+# ┌──────────────────────────────────────┐ 
+# │                                      │░
+# │            SOURCE CONFIG             │░
+# │                                      │░
+# └──────────────────────────────────────┘░
+#  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+. ${SCRIPT_DIR}/config.conf
+
+# ┌──────────────────────────────────────┐ 
+# │                                      │░
+# │           SOURCE COMPONENTS          │░
+# │                                      │░
+# └──────────────────────────────────────┘░
+#  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+. ${SCRIPT_DIR}/components/colours
+. ${SCRIPT_DIR}/components/bar
+. ${SCRIPT_DIR}/components/row
+. ${SCRIPT_DIR}/components/title
+
+# ┌──────────────────────────────────────┐ 
+# │                                      │░
+# │           PLUGINS TO RUN             │░
+# │                                      │░
+# └──────────────────────────────────────┘░
+#  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+plugins()
+{
+
+    PLUGINS=(
+
+        # Essentially Ordered Plugins.
+        "kernel"        # KERNAL MUST BE FIRST PLUGIN. (OS Relies on it)
+        "os"            # OS MUST BE THE SECOND PLUGIN. (Others rely on it)
+
+        # All other Plugins
+        "hostname"
+        "local_ip"
+        "public_ip"
+        "uptime"
+        "cpu_usage"
+        "memory"
+        "disk"
+        "model"
+        "systemctl:mysql"   
+        "systemctl:php"   
+        "systemctl:apache"   
+        "systemctl:ssh"   
+        "puppet"
+        "logo"
+    )
+
+
+    # ┌──────────────────────────────────────┐ 
+    # │        Source & Run Plugins          │
+    # └──────────────────────────────────────┘
+    for plugin in "${PLUGINS[@]}"; do
+
+        IFS=: read plugin_name plugin_parameter <<< $plugin
+
+        filename="get_${plugin_name}"               # Filename
+        . ${SCRIPT_DIR}/plugins/$filename                       # Source File
+        $filename $plugin_parameter 2> /dev/null   # Run, hide errors
+    done
+
+}
+plugins
+
+
+
+system()
+{
+    # SYSTEM
+    printf "${LOGO}\n"
+    title "${HOSTNAME}"
+
+    row "HOST"      "${HOSTNAME}"   "APACHE" "${APACHE}"    "UPTIME" "${CPU_USAGE}"
+    row "OS"        "${OS}"         "PHP"    "${PHP}"       "MEMORY" "${MEMORY}"
+    row "MODEL"     "${MODEL}"      "MySQL"  "${MYSQL}"     "DISK" "${DISK}"
+    row "LOCAL IP"  "${LOCAL_IP}"   "SSH"    "${SSH}"       "" ""
+    row "PUBLIC IP" "${PUBLIC_IP}" 
+
+    
+
+}
+
+puppet()
+{
+    title "Puppet"
+    row "Last Ran" ${PUPPET_LASTRAN} "Locked" ${PUPPET_LOCKED} "Message" "${PUPPET_MESSAGE}"
+}
+
+
+helpme(){
+    title "Help"
+    row "help" "List custom scripts." 
+    row "cheat" "command cheatsheet."
+}
+
+system;
+puppet
+helpme;
+title "◣◥";

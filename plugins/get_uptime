@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# Get the current Uptime
+# Taken from NeoFetch
+#
+# Shorten the output of the uptime function
+#
+# Default: 'on'
+# Values:  'on', 'tiny', 'off'
+# Flag:    --UPTIME_SHORTHAND
+#
+# Example:
+# on:   '2 days, 10 hours, 3 mins'
+# tiny: '2d 10h 3m'
+# off:  '2 days, 10 hours, 3 minutes'
+UPTIME_SHORTHAND="tiny"
+
+get_uptime() {
+
+    # Get uptime in seconds.
+    case $OS in
+        Linux|Windows|MINIX)
+            if [[ -r /proc/uptime ]]; then
+                s=$(< /proc/uptime)
+                s=${s/.*}
+            else
+                boot=$(date -d"$(uptime -s)" +%s)
+                now=$(date +%s)
+                s=$((now - boot))
+            fi
+        ;;
+
+        "Mac OS X"|"macOS"|"iPhone OS"|BSD|FreeMiNT)
+            boot=$(sysctl -n kern.boottime)
+            boot=${boot/\{ sec = }
+            boot=${boot/,*}
+
+            # Get current date in seconds.
+            now=$(date +%s)
+            s=$((now - boot))
+        ;;
+
+        Solaris)
+            s=$(kstat -p unix:0:system_misc:snaptime | awk '{print $2}')
+            s=${s/.*}
+        ;;
+
+        AIX|IRIX)
+            t=$(LC_ALL=POSIX ps -o etime= -p 1)
+
+            [[ $t == *-*   ]] && { d=${t%%-*}; t=${t#*-}; }
+            [[ $t == *:*:* ]] && { h=${t%%:*}; t=${t#*:}; }
+
+            h=${h#0}
+            t=${t#0}
+
+            s=$((${d:-0}*86400 + ${h:-0}*3600 + ${t%%:*}*60 + ${t#*:}))
+        ;;
+
+        Haiku)
+            s=$(($(system_time) / 1000000))
+        ;;
+    esac
+
+    d="$((s / 60 / 60 / 24)) days"
+    h="$((s / 60 / 60 % 24)) hours"
+    m="$((s / 60 % 60)) mins"
+
+    # Remove plural if < 2.
+    ((${d/ *} == 1)) && d=${d/s}
+    ((${h/ *} == 1)) && h=${h/s}
+    ((${m/ *} == 1)) && m=${m/s}
+
+    # Hide empty fields.
+    ((${d/ *} == 0)) && unset d
+    ((${h/ *} == 0)) && unset h
+    ((${m/ *} == 0)) && unset m
+
+    UPTIME=${d:+$d, }${h:+$h, }$m
+    UPTIME=${UPTIME%', '}
+    UPTIME=${UPTIME:-$s secs}
+
+    # Make the output of UPTIME smaller.
+    case $UPTIME_SHORTHAND in
+        on) ;;
+
+        tiny)
+            UPTIME=${UPTIME/ days/d}
+            UPTIME=${UPTIME/ day/d}
+            UPTIME=${UPTIME/ hours/h}
+            UPTIME=${UPTIME/ hour/h}
+            UPTIME=${UPTIME/ mins/m}
+            UPTIME=${UPTIME/ min/m}
+            UPTIME=${UPTIME/ secs/s}
+            UPTIME=${UPTIME//,}
+        ;;
+    esac
+}
