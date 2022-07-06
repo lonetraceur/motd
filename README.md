@@ -3,7 +3,7 @@
 
 <div align="center">
 
-<img src="https://svg-rewriter.sachinraja.workers.dev/?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2F%40mdi%2Fsvg%406.7.96%2Fsvg%2Fmessage-bulleted.svg&fill=%230F172A&width=200px&height=200px" style="width:200px;"/>
+<img src="https://svg-rewriter.sachinraja.workers.dev/?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2F%40mdi%2Fsvg%406.7.96%2Fsvg%2Fmessage-bulleted.svg&fill=%23334155&width=200px&height=200px" style="width:200px;"/>
 
 <h3 align="center">MOTD</h3>
 
