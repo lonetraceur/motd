@@ -3,7 +3,6 @@
 
 <div align="center">
 
-
 <img src="https://svg-rewriter.sachinraja.workers.dev/?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fnpm%2F%40mdi%2Fsvg%406.7.96%2Fsvg%2Fmessage-bulleted.svg&fill=%230F172A&width=200px&height=200px" style="width:200px;"/>
 
 <h3 align="center">MOTD</h3>
@@ -14,6 +13,24 @@ Modular Message of the Day (motd) Script built on NeoFetch. With additional PUPP
 </div>
 
 ##  1. <a name='TableofContents'></a>Table of Contents
+
+* 1. [Table of Contents](#TableofContents)
+* 2. [About The Project](#AboutTheProject)
+	* 2.1. [Built With](#BuiltWith)
+	* 2.2. [Installation](#Installation)
+* 3. [Usage](#Usage)
+* 4. [ Customising](#Customising)
+	* 4.1. [Adding Plugins](#AddingPlugins)
+		* 4.1.1. [Filename](#Filename)
+		* 4.1.2. [Your plugin](#Yourplugin)
+		* 4.1.3. [motd](#motd)
+		* 4.1.4. [Output](#Output)
+		* 4.1.5. [Custom Branding](#CustomBranding)
+* 5. [Troubleshooting](#Troubleshooting)
+* 6. [Contributing](#Contributing)
+* 7. [License](#License)
+* 8. [Contact](#Contact)
+* 9. [Changelog](#Changelog)
 
 
 ##  2. <a name='AboutTheProject'></a>About The Project
@@ -28,6 +45,34 @@ The notable differences are as follows:
 1. Functions for formatting output are separate files in the `components` folder.
 1. Additional custom PUPPET-based plugin for displaying lock messages, status, etc...
 1. Additional systemd plugin for displaying the status of services.
+
+```bash
+❯ motd
+
+███████████████  ████████████████████████
+████████████████  ███████████████████████
+█████████████████  ██████████████████████
+██████████████████  █████████████████████
+███████████████████  ████████████████████
+████████████████████  ███████████████████
+█████████████████████  ██████████████████
+██████████████████████  █████████████████
+███████████████████████  ████████████████
+████████████████████████  ███████████████
+
+------------------------------------------------- Andys-MacBook-Air.local -------------------------------------------------
+HOST      : Andys-MacBook-Air.local     APACHE    : 🚫                        UPTIME    : ------------=== 83%
+OS        : macOS                       PHP       : 🚫                        MEMORY    : ----------=====
+MODEL     : MacBookAir8,1               MySQL     : 🚫                        DISK      : -============== 14G / 466G (7%)
+LOCAL IP  : 192.168.1.15                SSH       : 🚫                                  :                             
+PUBLIC IP : 79.79.208.183                                                                                                 
+--------------------------------------------------------- Puppet ---------------------------------------------------------
+Last Ran  : -                           Locked    : -                           Message   : -                           
+---------------------------------------------------------- Help ----------------------------------------------------------
+help      : List custom scripts.                                                                                          
+cheat     : command cheatsheet.                                                                                           
+----------------------------------------------------------- ◣◥ -----------------------------------------------------------
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -68,15 +113,15 @@ You can run the script whenever you like by using `motd` on the command line.
 
 ##  4. <a name='Customising'></a> Customising
 
-### Adding Plugins
+###  4.1. <a name='AddingPlugins'></a>Adding Plugins
 
-#### Filename
+####  4.1.1. <a name='Filename'></a>Filename
 
 If you wish to add a plugin, create a new file in the `plugins` folder. The name of the file *MUST* be prefixed with `get_` and the name of the function.
 
 So, if you were creating a `foobar` funciton, the name of the plugin file would be `get_foobar` (with NO `.sh` on the end)
 
-#### Your plugin
+####  4.1.2. <a name='Yourplugin'></a>Your plugin
 
 Your plugin *MUST* have a function must be the same as the filename. `get_foobar() { }` for instance.
 Your plugin *MUST* return a variable called by the name of your function (e.g. $FOOBAR). You can add additional variables, but these will be used in the output later.
@@ -87,7 +132,7 @@ get_foobar() {
 }
 ```
 
-#### motd
+####  4.1.3. <a name='motd'></a>motd
 
 Next, within the `motd` file, there is a `plugins()` function with a `PLUGINS` variable. Add your new plugin here at the bottom of the list. (Without the `get_` prefix)
 
@@ -119,7 +164,7 @@ e.g.
     )
 ```
 
-#### Output
+####  4.1.4. <a name='Output'></a>Output
 
 Lastly, Add your new plugin to one of the output sections at the bottom (or create your own)
 
@@ -144,7 +189,7 @@ system()
 }
 ```
 
-#### Custom Branding
+####  4.1.5. <a name='CustomBranding'></a>Custom Branding
 
 Change the logo in the `config.conf` file.
 
