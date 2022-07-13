@@ -28,7 +28,7 @@ file_location
 # │                                      │░
 # └──────────────────────────────────────┘░
 #  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-. ${SCRIPT_DIR}/config.conf
+. ${SCRIPT_DIR}/logo.conf
 
 # ┌──────────────────────────────────────┐ 
 # │                                      │░
@@ -39,6 +39,7 @@ file_location
 . ${SCRIPT_DIR}/components/colours
 . ${SCRIPT_DIR}/components/bar
 . ${SCRIPT_DIR}/components/row
+. ${SCRIPT_DIR}/components/columns
 . ${SCRIPT_DIR}/components/title
 
 # ┌──────────────────────────────────────┐ 
@@ -90,37 +91,38 @@ plugins()
 plugins
 
 
-
-system()
-{
-    # SYSTEM
-    printf "${LOGO}\n"
-    title "${HOSTNAME}"
-
-    row "HOST"      "${HOSTNAME}"   "APACHE" "${APACHE}"    "UPTIME" "${CPU_USAGE}"
-    row "OS"        "${OS}"         "PHP"    "${PHP}"       "MEMORY" "${MEMORY}"
-    row "MODEL"     "${MODEL}"      "MySQL"  "${MYSQL}"     "DISK" "${DISK}"
-    row "LOCAL IP"  "${LOCAL_IP}"   "SSH"    "${SSH}"       "" ""
-    row "PUBLIC IP" "${PUBLIC_IP}" 
-
-    
-
-}
-
-puppet()
-{
-    title "Puppet"
-    row "Last Ran" ${PUPPET_LASTRAN} "Locked" ${PUPPET_LOCKED} "Message" "${PUPPET_MESSAGE}"
-}
+COLUMN1_WIDTH=41
+COLUMN1="${LOGO}"
 
 
-helpme(){
-    title "Help"
-    row "help" "List custom scripts." 
-    row "cheat" "command cheatsheet."
-}
+COLUMN2_WIDTH=50
+add_line_to_column2 $HOSTNAME
+add_row_to_column2 HOST         $HOSTNAME
+add_row_to_column2 OS           $OS
+add_row_to_column2 MODEL        $MODEL
+add_row_to_column2 LOCAL_IP     $LOCAL_IP
+add_row_to_column2 PUBLIC_IP    $PUBLIC_IP
 
-system;
-puppet
-helpme;
-title "◣◥";
+add_line_to_column2 SERVICES
+add_row_to_column2 APACHE       $APACHE
+add_row_to_column2 PHP          $PHP
+add_row_to_column2 MYSQL        $MYSQL
+add_row_to_column2 SSH          $SSH
+
+add_line_to_column2 NODE
+add_row_to_column2 UPTIME       $CPU_USAGE
+add_row_to_column2 MEMORY       $MEMORY
+add_row_to_column2 DISK         $DISK
+
+add_line_to_column2 PUPPET
+add_row_to_column2 RAN          $PUPPET_LASTRAN
+add_row_to_column2 LOCKED       $PUPPET_LOCKED
+add_row_to_column2 MESSAGE      $PUPPET_MESSAGE
+
+add_line_to_column2 "HELP COMMANDS"
+add_row_to_column2 "help" "List custom scripts."
+add_row_to_column2 "cheat" "command cheatsheet."
+
+add_line_to_column2 "◣◥"
+
+columns;

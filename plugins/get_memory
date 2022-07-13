@@ -38,7 +38,7 @@ memory_unit="mib"
 # infobar: 'info [---=======]'
 # barinfo: '[---=======] info'
 # off:     'info'
-memory_display="bar"
+memory_display="barinfo"
 
 #
 # Returns
@@ -174,7 +174,7 @@ get_memory() {
         ;;
     esac
 
-    MEMORY="${mem_used}${mem_label:-MiB} / ${mem_total}${mem_label:-MiB} ${mem_perc:+(${mem_perc}%)}"
+    MEMORY="${mem_used}${mem_label:-MiB} / ${mem_total}${mem_label:-MiB} ${mem_perc:+(${mem_perc}%%)}"
 
     # Bars.
     case $memory_display in

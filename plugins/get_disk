@@ -119,11 +119,11 @@ get_disk() {
         case $df_version in
             *befhikm*)
                 DISK="$((disk_usage/1024/1024))G / $((disk_space/1024/1024))G"
-                DISK+="${disk_perc:+ ($disk_perc%)}"
+                DISK+="${disk_perc:+ ($disk_perc%%)}"
             ;;
 
             *)
-                DISK="${disk_usage/i} / ${disk_space/i}${disk_perc:+ ($disk_perc%)}"
+                DISK="${disk_usage/i} / ${disk_space/i}${disk_perc:+ ($disk_perc%%)}"
             ;;
         esac
 
@@ -148,7 +148,7 @@ get_disk() {
             bar)     DISK="$(bar "$disk_perc" "100")" ;;
             infobar) DISK+=" $(bar "$disk_perc" "100")" ;;
             barinfo) DISK="$(bar "$disk_perc" "100") $DISK" ;;
-            perc)    DISK="${disk_perc}% $(bar "$disk_perc" "100")" ;;
+            perc)    DISK="${disk_perc}%% $(bar "$disk_perc" "100")" ;;
         esac
 
     done

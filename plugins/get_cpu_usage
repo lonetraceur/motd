@@ -68,7 +68,7 @@ get_cpu_usage() {
     case $CPU_DISPLAY in
         "bar")     CPU_USAGE="$(bar "$CPU_USAGE" 100)" ;;
         "infobar") CPU_USAGE="${CPU_USAGE}% $(bar "$CPU_USAGE" 100)" ;;
-        "barinfo") CPU_USAGE="$(bar "$CPU_USAGE" 100) ${CPU_USAGE}%" ;;
+        "barinfo") CPU_USAGE="$(bar "$CPU_USAGE" 100) ${CPU_USAGE}%%" ;;
         *)         CPU_USAGE="${CPU_USAGE}%" ;;
     esac
 }

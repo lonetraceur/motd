@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+
+# https://askubuntu.com/questions/1066396/how-to-print-multiline-variables-in-side-by-side-columns-in-bash
+
+# usage:
+# columns
+
+columns()
+{
+    # backup internal field separator to be safe
+    IFSave=$IFS
+
+    # set IFS to newline so vars will use newline to split into array
+    IFS=$'\n'
+
+    # split variables into array
+    foo=($COLUMN1)
+    bar=($COLUMN2)
+    
+    #restore IFS to original value to be safe
+    IFS=$IFSave
+
+    # Define width of column 1 empty line.
+    for ((i=1; i<=$COLUMN1_WIDTH; i++)); do
+        BLANK_LINE+=" "
+    done
+
+    # loop array bar, and cross reference key in array bar
+    for i in "${!bar[@]}"; do 
+
+        if [ -z "${foo[$i]}" ];then
+            foo[$i]=${BLANK_LINE}
+        fi
+
+        printf "${Cyan}${foo[$i]} ${bar[$i]}\n"
+    done
+
+}
+
+
+add_row_to_column2()
+{
+    VARIABLE_NAME=$(echo $1 | tr '[:lower:]' '[:upper:]')
+    VARIABLE_VALUE="${@:2}"
+    RESULT=$(printf "${I_Black}%-10s ${Yellow}%s \n" "${1}" "${VARIABLE_VALUE}" )
+    COLUMN2="$COLUMN2
+    $RESULT"
+}
+
+
+
+add_line_to_column2()
+{
+    HALF=""
+    WIDTH=$COLUMN2_WIDTH
+    TITLE=$1
+    COUNT=${#TITLE}
+    let ROUNDED_WIDTH=$(( $WIDTH - 1 - ($WIDTH % 2) ))
+    let "LENGTH = ($ROUNDED_WIDTH-$COUNT)/2"
+    for ((i=1; i<=$LENGTH; i++)); do
+        HALF+="${I_Black}-"
+    done
+
+
+    COLUMN2="$COLUMN2
+    
+    ${HALF} ${Purple}$1 ${HALF}
+    "
+}
