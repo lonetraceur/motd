@@ -252,6 +252,7 @@ Author Link: [https://github.com/IORoot](https://github.com/IORoot)
 
 ##  9. <a name='Changelog'></a>Changelog
 
+
 v1.1.0 - Changed to using simple double columns. Basically the same as watch Neofetch originally did. Doh!
 
 v1.0.0 - First version.
